@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Formazione Brina e Defrost</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            display: none;
+        }
+        .results h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .note {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Calcolo Semplificato Brina & Defrost</h2>
+    
+    <div class="form-group">
+        <label for="text">Temperatura Aria Esterna (°C):</label>
+        <input type="number" id="text" value="2" step="0.1">
+    </div>
+    
+    <div class="form-group">
+        <label for="ur">Umidità Relativa Esterna (%):</label>
+        <input type="number" id="ur" value="85" step="1" min="0" max="100">
+    </div>
+    
+    <div class="form-group">
+        <label for="qmax">Potenza Termica Macchina (kW):</label>
+        <input type="number" id="qmax" value="10" step="0.1">
+    </div>
+    
+    <div class="form-group">
+        <label for="tevap">Temperatura di Evaporazione (°C):</label>
+        <input type="number" id="tevap" value="-5" step="0.1">
+    </div>
+    
+    <button onclick="calcola()">Calcola</button>
+
+    <div id="risultati" class="results">
+        <h3>Risultati Stimati</h3>
+        <p><strong>Tempo di accumulo prima del blocco:</strong> <span id="out_tempo_ciclo"></span></p>
+        <p><strong>Durata stimata del Defrost:</strong> <span id="out_durata_defrost"></span></p>
+        <p><strong>Potenza Elettrica Assorbita (Iniziale):</strong> <span id="out_potenza_el"></span></p>
+        <p><strong>Tasso di brinamento:</strong> <span id="out_tasso"></span></p>
+    </div>
+
+    <div class="note">
+        Nota: I parametri costruttivi della batteria (portata d'aria, massa, limite massimo di brina tollerato) sono preimpostati nel codice. Puoi modificarli aprendo il file HTML con un editor di testo.
+    </div>
+</div>
+
+<script>
+    function calcola() {
+        // 1. Lettura degli input
+        const Text = parseFloat(document.getElementById('text').value);
+        const UR = parseFloat(document.getElementById('ur').value) / 100;
+        const Qmax = parseFloat(document.getElementById('qmax').value);
+        const Tevap = parseFloat(document.getElementById('tevap').value);
+
+        // --- COSTANTI DELLA MACCHINA (Modificabili qui) ---
+        const m_aria = 1.0;          // Portata aria (kg/s) - es. circa 3000 m3/h
+        const eta_massa = 0.6;       // Efficienza di scambio di massa (0.5 - 0.8)
+        const M_max = 1.5;           // Massa limite di brina prima del defrost (kg)
+        const M_batt = 10.0;         // Massa della batteria alettata (kg)
+        const c_batt = 0.38;         // Calore specifico batteria (Rame = 0.38 kJ/kgK, Alluminio = 0.90)
+        const T_fine = 10.0;         // Temperatura di fine sbrinamento (°C)
+        const eta_defrost = 0.4;     // Efficienza dello sbrinamento (40%)
+        const COP_stimato = 3.0;     // COP nominale a queste condizioni per stimare l'assorbimento
+        const P_atm = 101.325;       // Pressione atmosferica (kPa)
+        // --------------------------------------------------
+
+        const risultatiDiv = document.getElementById('risultati');
+
+        // Se l'evaporazione è sopra lo zero, non c'è brina
+        if (Tevap >= 0) {
+            mostraErrore("La temperatura di evaporazione è > 0°C. Non si forma brina.");
+            return;
+        }
+
+        // 2. Calcoli Psicrometrici (Formula di Magnus-Tetens per Pressione di Saturazione)
+        function calcUmiditaAssoluta(T, umiditaRelativa) {
+            // Pressione di saturazione del vapore (kPa)
+            let Psat = 0.61078 * Math.exp((17.27 * T) / (T + 237.3));
+            let Pv = umiditaRelativa * Psat;
+            // Umidità assoluta (kg vapore / kg aria secca)
+            return (0.622 * Pv) / (P_atm - Pv);
+        }
+
+        let W_ext = calcUmiditaAssoluta(Text, UR);
+        let W_evap = calcUmiditaAssoluta(Tevap, 1.0); // Sulla batteria l'aria è satura (UR = 100%)
+
+        // Verifica se si forma condensa/brina
+        if (W_ext <= W_evap) {
+            mostraErrore("L'aria esterna è troppo secca per formare brina a questa temperatura di evaporazione.");
+            return;
+        }
+
+        // 3. Tasso di brinamento
+        let m_dot_brina = m_aria * eta_massa * (W_ext - W_evap); // kg/s
+        let m_dot_brina_kg_h = m_dot_brina * 3600; // kg/h
+
+        // 4. Calcolo dei Tempi
+        // Tempo per raggiungere il blocco (ore)
+        let t_ciclo_ore = M_max / m_dot_brina_kg_h; 
+
+        // Energia per il defrost (kJ) -> Calore latente fusione (334 kJ/kg) + Riscaldamento massa metallo
+        let E_defrost = (M_max * 334 + M_batt * c_batt * (T_fine - Tevap)) / eta_defrost; 
+        
+        // Assumiamo che la potenza usata per il defrost sia uguale a Qmax
+        let t_defrost_secondi = E_defrost / Qmax; 
+        let t_defrost_minuti = t_defrost_secondi / 60;
+
+        // 5. Potenza prelevata iniziale
+        let P_el = Qmax / COP_stimato;
+
+        // 6. Aggiornamento dell'interfaccia
+        document.getElementById('out_tempo_ciclo').innerText = t_ciclo_ore.toFixed(2) + " ore";
+        document.getElementById('out_durata_defrost').innerText = t_defrost_minuti.toFixed(1) + " minuti";
+        document.getElementById('out_potenza_el').innerText = P_el.toFixed(2) + " kW (iniziali)";
+        document.getElementById('out_tasso').innerText = m_dot_brina_kg_h.toFixed(3) + " kg/h";
+
+        risultatiDiv.style.display = 'block';
+        risultatiDiv.style.borderLeftColor = '#3498db';
+        risultatiDiv.style.backgroundColor = '#e8f4f8';
+    }
+
+    function mostraErrore(messaggio) {
+        const risultatiDiv = document.getElementById('risultati');
+        risultatiDiv.style.display = 'block';
+        risultatiDiv.style.borderLeftColor = '#e74c3c';
+        risultatiDiv.style.backgroundColor = '#fadbd8';
+        risultatiDiv.innerHTML = `<h3>Attenzione</h3><p>${messaggio}</p>`;
+    }
+</script>
+
+</body>
+</html>

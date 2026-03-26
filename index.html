@@ -1,203 +1,735 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolatore Formazione Brina e Defrost</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-top: 0;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .results {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #e8f4f8;
-            border-left: 5px solid #3498db;
-            border-radius: 4px;
-            display: none;
-        }
-        .results h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .note {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calcolatore Defrost - HUB</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Palette Colori Moderna */
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #111827; 
+      --muted: #6b7280;
+      --border: #e5e7eb; 
+      
+      /* Colore Aziendale HUB Specifico */
+      --hub-violet: #3C364C;
+      --hub-violet-hover: #4e4663;
+      
+      --primary: #3a73d8;
+      --accent: #eff6ff;
+      --danger: #ef4444;       
+      --success: #10b981;      
+      
+      /* Effetti Moderni */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h2, h3, h4 {
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    /* --- LAYOUT PRINCIPALE --- */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* --- HEADER --- */
+    .header {
+      background: var(--hub-violet);
+      color: white;
+      font-family: 'Roboto Condensed', sans-serif;
+      border-radius: var(--radius);
+      padding: 35px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .header .logo {
+      max-height: 120px;
+      max-width: 300px;
+      object-fit: contain;
+    }
+
+    .header-divider {
+      width: 2px;
+      height: 120px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 2px;
+    }
+
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .company-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .header h1 { 
+      margin: 0 0 6px 0; 
+      font-size: 2.6rem; 
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+    }
+    .font-normal { font-weight: 400; }
+    .font-bold { font-weight: 700; }
+
+    .header p { 
+      font-family: 'Poppins', sans-serif;
+      margin: 0; 
+      opacity: 0.85; 
+      font-size: 1.05rem; 
+      font-weight: 400; 
+    }
+
+    .contact-info {
+      font-family: 'Poppins', sans-serif;
+      margin-top: 8px;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    
+    .contact-info a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .contact-info a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* --- CARDS & GRID --- */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      margin: 0 0 20px 0;
+      font-size: 1.3rem;
+      color: var(--hub-violet);
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+
+    /* --- INPUTS --- */
+    label { 
+      display: block;
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      color: var(--muted); 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: #fdfdfd;
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--hub-violet);
+      box-shadow: 0 0 0 3px rgba(60, 54, 76, 0.1);
+    }
+
+    .help {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    p.note {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* --- PULSANTI --- */
+    .btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.2s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:hover { 
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary { 
+      background: var(--hub-violet); 
+      color: white; 
+    }
+    .btn-primary:hover { 
+      background: var(--hub-violet-hover); 
+    }
+    
+    .btn-secondary { 
+      background: #f8fafc; 
+      color: var(--text); 
+      border: 1px solid var(--border); 
+    }
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    /* --- RISULTATI --- */
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .result-box .k {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .result-box .v {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--hub-violet);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    
+    th {
+      color: var(--hub-violet);
+      font-weight: 600;
+      background: #f8fafc;
+    }
+
+    .mono {
+      font-family: Consolas, Monaco, monospace;
+      word-break: break-word;
+      color: var(--primary);
+    }
+
+    .warn {
+      color: #92400e;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      margin-top: 40px;
+      padding: 25px 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-copyright a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    
+    .footer-copyright a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 820px) {
+      .grid, .grid-3, .results { grid-template-columns: 1fr; }
+      .header { flex-direction: column; text-align: center; padding: 30px 20px;}
+      .header-divider { display: none; }
+      .header h1 { font-size: 2.2rem; }
+      .container { padding: 20px 10px; }
+      .btns { flex-direction: column; }
+      button { width: 100%; }
+    }
+
+    /* --- STILI STAMPA / PDF --- */
+    @page { margin: 1.2cm; }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      body { 
+        background: white; 
+        color: black; 
+        font-size: 9pt; 
+        zoom: 0.8; 
+      }
+
+      .btns, .footer-copyright { display: none !important; }
+      .container { padding: 0; margin: 0; max-width: 100%; }
+
+      .header { 
+        color: white !important; 
+        background: var(--hub-violet) !important; 
+        border-radius: 8px !important; 
+        flex-direction: row; 
+        text-align: left; 
+        padding: 15px 20px !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        page-break-after: avoid;
+      }
+      .header h1 { font-size: 2.2rem !important; margin-bottom: 2px !important; }
+      .header p { font-size: 0.95rem !important; margin-bottom: 4px !important; }
+      .header .logo { max-height: 55px !important; }
+      .header-divider { height: 60px !important; }
+      .contact-info a { color: white !important; text-decoration: none !important; }
+
+      .card { 
+        box-shadow: none !important; 
+        border: 1px solid #d1d5db !important; 
+        page-break-inside: avoid !important;
+        border-radius: 8px !important; 
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+      }
+
+      .section-title { 
+        color: var(--hub-violet) !important; 
+        border-bottom: 2px solid var(--hub-violet) !important; 
+        margin-bottom: 12px !important;
+        padding-bottom: 5px !important;
+        font-size: 1.1rem !important;
+      }
+
+      .grid, .grid-3 { gap: 10px !important; }
+      label { font-size: 0.75rem !important; margin-bottom: 2px !important;}
+
+      input, select { 
+        border: 1px solid #94a3b8 !important; 
+        background: transparent !important; 
+        padding: 6px 8px !important;
+        font-size: 8.5pt !important;
+        border-radius: 4px !important;
+        color: black !important;
+      }
+
+      .result-box { 
+        border: 1px solid #cbd5e1 !important; 
+        padding: 12px !important; 
+        background: transparent !important; 
+      }
+      .result-box .v { font-size: 1.4rem !important; }
+      
+      .warn { border: 1px solid #92400e !important; background: transparent !important;}
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>Calcolo Semplificato Brina & Defrost</h2>
+  <div class="container">
     
-    <div class="form-group">
-        <label for="text">Temperatura Aria Esterna (°C):</label>
-        <input type="number" id="text" value="2" step="0.1">
-    </div>
-    
-    <div class="form-group">
-        <label for="ur">Umidità Relativa Esterna (%):</label>
-        <input type="number" id="ur" value="85" step="1" min="0" max="100">
-    </div>
-    
-    <div class="form-group">
-        <label for="qmax">Potenza Termica Macchina (kW):</label>
-        <input type="number" id="qmax" value="10" step="0.1">
-    </div>
-    
-    <div class="form-group">
-        <label for="tevap">Temperatura di Evaporazione (°C):</label>
-        <input type="number" id="tevap" value="-5" step="0.1">
-    </div>
-    
-    <button onclick="calcola()">Calcola</button>
-
-    <div id="risultati" class="results">
-        <h3>Risultati Stimati</h3>
-        <p><strong>Tempo di accumulo prima del blocco:</strong> <span id="out_tempo_ciclo"></span></p>
-        <p><strong>Durata stimata del Defrost:</strong> <span id="out_durata_defrost"></span></p>
-        <p><strong>Potenza Elettrica Assorbita (Iniziale):</strong> <span id="out_potenza_el"></span></p>
-        <p><strong>Tasso di brinamento:</strong> <span id="out_tasso"></span></p>
+    <div class="header">
+      <img src="logo.png" alt="HUB Logo" class="logo" onerror="this.style.display='none'">
+      
+      <div class="header-divider"></div>
+      
+      <div class="header-content">
+        <div class="company-name">HUB - Società di Ingegneria</div>
+        <h1><span class="font-normal">Calcolatore</span> <span class="font-bold">Defrost</span></h1>
+        <p>Modello termodinamico e correlazione rapida per cicli di sbrinamento.</p>
+        <div class="contact-info">
+          <a href="https://www.hub-sdi.it" target="_blank">www.hub-sdi.it</a> &nbsp;|&nbsp; 
+          <a href="mailto:info@hub-sdi.it">info@hub-sdi.it</a> &nbsp;|&nbsp; 
+          <a href="tel:+393423454817">+39 342 345 4817</a>
+        </div>
+      </div>
     </div>
 
-    <div class="note">
-        Nota: I parametri costruttivi della batteria (portata d'aria, massa, limite massimo di brina tollerato) sono preimpostati nel codice. Puoi modificarli aprendo il file HTML con un editor di testo.
+    <div class="card">
+      <p class="note">
+        Modello semplificato basato su: <strong>T<sub>evap</sub> = T<sub>amb</sub> - ΔT<sub>evap</sub></strong>,
+        formazione brina se <strong>T<sub>evap</sub> &lt; 0 °C</strong> e <strong>T<sub>dew</sub> &gt; T<sub>evap</sub></strong>,
+        accumulo proporzionale al gradiente di pressione di vapore, e durata defrost ricavata dall'energia di fusione del ghiaccio.
+      </p>
     </div>
-</div>
 
-<script>
+    <div class="card">
+      <h2 class="section-title">Condizioni operative</h2>
+      <div class="grid-3">
+        <div>
+          <label for="Tamb">Temperatura esterna [°C]</label>
+          <input id="Tamb" type="number" step="0.1" value="2" />
+        </div>
+        <div>
+          <label for="UR">Umidità relativa [%]</label>
+          <input id="UR" type="number" step="1" value="90" />
+        </div>
+        <div>
+          <label for="dTevap">ΔT evaporazione [K]</label>
+          <input id="dTevap" type="number" step="0.1" value="9" />
+          <div class="help">T<sub>evap</sub> = T<sub>amb</sub> - ΔT<sub>evap</sub></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Stima superficie batteria</h2>
+      <div class="grid">
+        <div>
+          <label for="Qhp">Potenza termica nominale PDC [kW]</label>
+          <input id="Qhp" type="number" step="0.1" value="10" />
+        </div>
+        <div>
+          <label for="useAutoA">Metodo stima superficie</label>
+          <select id="useAutoA">
+            <option value="auto" selected>Stima automatica da potenza</option>
+            <option value="manual">Inserimento manuale</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:18px;">
+        <div>
+          <label for="U">Trasmittanza U [W/m²K]</label>
+          <input id="U" type="number" step="0.1" value="50" />
+        </div>
+        <div>
+          <label for="DTlm">ΔT log medio [K]</label>
+          <input id="DTlm" type="number" step="0.1" value="7" />
+        </div>
+        <div>
+          <label for="Amanual">A manuale [m²]</label>
+          <input id="Amanual" type="number" step="0.01" value="28.57" />
+        </div>
+      </div>
+      <div class="help">Stima: A = Q / (U · ΔT<sub>medio</sub>) con Q in W.</div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Parametri del modello fisico</h2>
+      <div class="grid-3">
+        <div>
+          <label for="deltaCrit">Spessore critico brina δ<sub>crit</sub> [mm]</label>
+          <input id="deltaCrit" type="number" step="0.1" value="1.0" />
+        </div>
+        <div>
+          <label for="Qdef">Potenza defrost Q<sub>def</sub> [W]</label>
+          <input id="Qdef" type="number" step="1" value="5000" />
+        </div>
+        <div>
+          <label for="k">Coeff. empirico k [kg/(m²·s·Pa)]</label>
+          <input id="k" type="number" step="0.000000001" value="0.00000001" />
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:18px;">
+        <div>
+          <label for="rhoIce">Densità brina/ghiaccio ρ<sub>ice</sub> [kg/m³]</label>
+          <input id="rhoIce" type="number" step="1" value="917" />
+        </div>
+        <div>
+          <label for="hFus">Calore latente fusione h<sub>fus</sub> [J/kg]</label>
+          <input id="hFus" type="number" step="1000" value="334000" />
+        </div>
+        <div>
+          <label for="copNom">COP nominale [-]</label>
+          <input id="copNom" type="number" step="0.01" value="3.20" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="btns">
+        <button class="btn-primary" onclick="calcola()">Calcola Risultati</button>
+        <button class="btn-secondary" onclick="resetDefaults()">Ripristina Dati Default</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Esito Calcolo</h2>
+      <div class="results">
+        <div class="result-box">
+          <div class="k">η Defrost</div>
+          <div class="v" id="etaOut">-</div>
+        </div>
+        <div class="result-box">
+          <div class="k">COP Corretto</div>
+          <div class="v" id="copOut">-</div>
+        </div>
+        <div class="result-box">
+          <div class="k">Superficie Batteria A</div>
+          <div class="v" id="aOut">-</div>
+        </div>
+      </div>
+
+      <table>
+        <tr>
+          <th>Grandezza Fisica</th>
+          <th>Valore Calcolato</th>
+        </tr>
+        <tr><td>T<sub>evap</sub> (Temperatura di evaporazione)</td><td id="TevapOut">-</td></tr>
+        <tr><td>T<sub>dew</sub> (Punto di rugiada)</td><td id="TdewOut">-</td></tr>
+        <tr><td>p<sub>sat</sub>(T<sub>amb</sub>)</td><td id="psatAmbOut">-</td></tr>
+        <tr><td>p<sub>v</sub> (Pressione di vapore)</td><td id="pvOut">-</td></tr>
+        <tr><td>p<sub>sat</sub>(T<sub>evap</sub>)</td><td id="psatEvapOut">-</td></tr>
+        <tr><td>ṁ<sub>ice</sub> (Tasso formazione brina)</td><td id="mdotOut">-</td></tr>
+        <tr><td>m<sub>ice,crit</sub> (Massa brina limite)</td><td id="miceOut">-</td></tr>
+        <tr><td>t<sub>cycle</sub> (Tempo ciclo tra defrost)</td><td id="tcycleOut">-</td></tr>
+        <tr><td>t<sub>defrost</sub> (Durata sbrinamento)</td><td id="tdefOut">-</td></tr>
+        <tr><td>η polinomiale (Correlazione rapida)</td><td id="etaPolyOut">-</td></tr>
+      </table>
+      <div id="warningBox"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Correlazione polinomiale rapida</h2>
+      <p class="note">
+        La correlazione seguente è ricavata dal modello semplificato iniziale e usa <strong>T [°C]</strong> e <strong>UR [%]</strong>.
+        È utile come stima rapida in script esterni, sebbene meno flessibile del calcolo fisico parametrico completo.
+      </p>
+      <table>
+        <tr>
+          <th>Termine Formula</th>
+          <th>Coefficiente Costante</th>
+        </tr>
+        <tr><td class="mono">a0</td><td class="mono">1.000017858912479</td></tr>
+        <tr><td class="mono">a1·T</td><td class="mono">4.661152012710183e-06</td></tr>
+        <tr><td class="mono">a2·UR</td><td class="mono">2.0760157108406825e-07</td></tr>
+        <tr><td class="mono">a3·T²</td><td class="mono">5.309978967204964e-07</td></tr>
+        <tr><td class="mono">a4·T·UR</td><td class="mono">-9.413162859999223e-08</td></tr>
+        <tr><td class="mono">a5·UR²</td><td class="mono">-2.4633405695464547e-08</td></tr>
+      </table>
+    </div>
+
+    <div class="footer-copyright">
+      &copy; <span id="annoCorrente"></span> HUB Società di Ingegneria S.r.l. - Tutti i diritti riservati.<br>
+      <small>
+        <a href="https://www.hub-sdi.it" target="_blank">www.hub-sdi.it</a> &nbsp;|&nbsp; 
+        <a href="mailto:info@hub-sdi.it">info@hub-sdi.it</a> &nbsp;|&nbsp; 
+        <a href="tel:+393423454817">+39 342 345 4817</a>
+      </small><br>
+      <small>Tool riservato per uso aziendale interno.</small>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('annoCorrente').textContent = new Date().getFullYear();
+
+    function pSat(T) {
+      return 610.94 * Math.exp(17.625 * T / (T + 243.04));
+    }
+
+    function dewPointFromPv(pv) {
+      const x = Math.log(pv / 610.94);
+      return 243.04 * x / (17.625 - x);
+    }
+
+    function fmt(x, digits = 3) {
+      if (!isFinite(x)) return "-";
+      return Number(x).toFixed(digits);
+    }
+
+    function setText(id, txt) {
+      document.getElementById(id).textContent = txt;
+    }
+
+    function etaPolynomial(T, UR) {
+      const a0 = 1.000017858912479;
+      const a1 = 4.661152012710183e-06;
+      const a2 = 2.0760157108406825e-07;
+      const a3 = 5.309978967204964e-07;
+      const a4 = -9.413162859999223e-08;
+      const a5 = -2.4633405695464547e-08;
+      let eta = a0 + a1*T + a2*UR + a3*T*T + a4*T*UR + a5*UR*UR;
+      eta = Math.max(0, Math.min(1, eta));
+      return eta;
+    }
+
+    function resetDefaults() {
+      document.getElementById("Tamb").value = 2;
+      document.getElementById("UR").value = 90;
+      document.getElementById("dTevap").value = 9;
+      document.getElementById("Qhp").value = 10;
+      document.getElementById("useAutoA").value = "auto";
+      document.getElementById("U").value = 50;
+      document.getElementById("DTlm").value = 7;
+      document.getElementById("Amanual").value = 28.57;
+      document.getElementById("deltaCrit").value = 1.0;
+      document.getElementById("Qdef").value = 5000;
+      document.getElementById("k").value = 0.00000001;
+      document.getElementById("rhoIce").value = 917;
+      document.getElementById("hFus").value = 334000;
+      document.getElementById("copNom").value = 3.20;
+      calcola();
+    }
+
     function calcola() {
-        // 1. Lettura degli input
-        const Text = parseFloat(document.getElementById('text').value);
-        const UR = parseFloat(document.getElementById('ur').value) / 100;
-        const Qmax = parseFloat(document.getElementById('qmax').value);
-        const Tevap = parseFloat(document.getElementById('tevap').value);
+      const Tamb = parseFloat(document.getElementById("Tamb").value);
+      const UR = parseFloat(document.getElementById("UR").value);
+      const dTevap = parseFloat(document.getElementById("dTevap").value);
+      const Qhp = parseFloat(document.getElementById("Qhp").value);
+      const modeA = document.getElementById("useAutoA").value;
+      const U = parseFloat(document.getElementById("U").value);
+      const DTlm = parseFloat(document.getElementById("DTlm").value);
+      const Amanual = parseFloat(document.getElementById("Amanual").value);
+      const deltaCrit_mm = parseFloat(document.getElementById("deltaCrit").value);
+      const Qdef = parseFloat(document.getElementById("Qdef").value);
+      const k = parseFloat(document.getElementById("k").value);
+      const rhoIce = parseFloat(document.getElementById("rhoIce").value);
+      const hFus = parseFloat(document.getElementById("hFus").value);
+      const copNom = parseFloat(document.getElementById("copNom").value);
 
-        // --- COSTANTI DELLA MACCHINA (Modificabili qui) ---
-        const m_aria = 1.0;          // Portata aria (kg/s) - es. circa 3000 m3/h
-        const eta_massa = 0.6;       // Efficienza di scambio di massa (0.5 - 0.8)
-        const M_max = 1.5;           // Massa limite di brina prima del defrost (kg)
-        const M_batt = 10.0;         // Massa della batteria alettata (kg)
-        const c_batt = 0.38;         // Calore specifico batteria (Rame = 0.38 kJ/kgK, Alluminio = 0.90)
-        const T_fine = 10.0;         // Temperatura di fine sbrinamento (°C)
-        const eta_defrost = 0.4;     // Efficienza dello sbrinamento (40%)
-        const COP_stimato = 3.0;     // COP nominale a queste condizioni per stimare l'assorbimento
-        const P_atm = 101.325;       // Pressione atmosferica (kPa)
-        // --------------------------------------------------
+      const warningBox = document.getElementById("warningBox");
+      warningBox.innerHTML = "";
 
-        const risultatiDiv = document.getElementById('risultati');
+      const Aauto = (Qhp * 1000.0) / (U * DTlm);
+      const A = modeA === "auto" ? Aauto : Amanual;
 
-        // Se l'evaporazione è sopra lo zero, non c'è brina
-        if (Tevap >= 0) {
-            mostraErrore("La temperatura di evaporazione è > 0°C. Non si forma brina.");
-            return;
+      const Tevap = Tamb - dTevap;
+      const psatAmb = pSat(Tamb);
+      const pv = UR / 100.0 * psatAmb;
+      const psatEvap = pSat(Tevap);
+      const Tdew = dewPointFromPv(pv);
+
+      const deltaCrit = deltaCrit_mm / 1000.0;
+      const miceCrit = rhoIce * A * deltaCrit;
+
+      let mdot = 0.0;
+      let tCycle = Infinity;
+      let tDef = 0.0;
+      let eta = 1.0;
+
+      const frostCondition = (Tevap < 0) && (Tdew > Tevap) && (pv > psatEvap);
+
+      if (frostCondition) {
+        mdot = k * A * (pv - psatEvap);
+        if (mdot > 0) {
+          tCycle = miceCrit / mdot;
+          tDef = (miceCrit * hFus) / Qdef;
+          eta = tCycle / (tCycle + tDef);
+          eta = Math.max(0, Math.min(1, eta));
         }
+      }
 
-        // 2. Calcoli Psicrometrici (Formula di Magnus-Tetens per Pressione di Saturazione)
-        function calcUmiditaAssoluta(T, umiditaRelativa) {
-            // Pressione di saturazione del vapore (kPa)
-            let Psat = 0.61078 * Math.exp((17.27 * T) / (T + 237.3));
-            let Pv = umiditaRelativa * Psat;
-            // Umidità assoluta (kg vapore / kg aria secca)
-            return (0.622 * Pv) / (P_atm - Pv);
-        }
+      const copCorr = copNom * eta;
+      const etaPoly = etaPolynomial(Tamb, UR);
 
-        let W_ext = calcUmiditaAssoluta(Text, UR);
-        let W_evap = calcUmiditaAssoluta(Tevap, 1.0); // Sulla batteria l'aria è satura (UR = 100%)
+      setText("etaOut", fmt(eta, 4));
+      setText("copOut", fmt(copCorr, 3));
+      setText("aOut", fmt(A, 2) + " m²");
 
-        // Verifica se si forma condensa/brina
-        if (W_ext <= W_evap) {
-            mostraErrore("L'aria esterna è troppo secca per formare brina a questa temperatura di evaporazione.");
-            return;
-        }
+      setText("TevapOut", fmt(Tevap, 2) + " °C");
+      setText("TdewOut", fmt(Tdew, 2) + " °C");
+      setText("psatAmbOut", fmt(psatAmb, 1) + " Pa");
+      setText("pvOut", fmt(pv, 1) + " Pa");
+      setText("psatEvapOut", fmt(psatEvap, 1) + " Pa");
+      setText("mdotOut", mdot > 0 ? mdot.toExponential(3) + " kg/s" : "0 kg/s");
+      setText("miceOut", fmt(miceCrit, 4) + " kg");
+      setText("tcycleOut", isFinite(tCycle) ? fmt(tCycle/60, 2) + " min" : "∞");
+      setText("tdefOut", fmt(tDef/60, 2) + " min");
+      setText("etaPolyOut", fmt(etaPoly, 4));
 
-        // 3. Tasso di brinamento
-        let m_dot_brina = m_aria * eta_massa * (W_ext - W_evap); // kg/s
-        let m_dot_brina_kg_h = m_dot_brina * 3600; // kg/h
-
-        // 4. Calcolo dei Tempi
-        // Tempo per raggiungere il blocco (ore)
-        let t_ciclo_ore = M_max / m_dot_brina_kg_h; 
-
-        // Energia per il defrost (kJ) -> Calore latente fusione (334 kJ/kg) + Riscaldamento massa metallo
-        let E_defrost = (M_max * 334 + M_batt * c_batt * (T_fine - Tevap)) / eta_defrost; 
-        
-        // Assumiamo che la potenza usata per il defrost sia uguale a Qmax
-        let t_defrost_secondi = E_defrost / Qmax; 
-        let t_defrost_minuti = t_defrost_secondi / 60;
-
-        // 5. Potenza prelevata iniziale
-        let P_el = Qmax / COP_stimato;
-
-        // 6. Aggiornamento dell'interfaccia
-        document.getElementById('out_tempo_ciclo').innerText = t_ciclo_ore.toFixed(2) + " ore";
-        document.getElementById('out_durata_defrost').innerText = t_defrost_minuti.toFixed(1) + " minuti";
-        document.getElementById('out_potenza_el').innerText = P_el.toFixed(2) + " kW (iniziali)";
-        document.getElementById('out_tasso').innerText = m_dot_brina_kg_h.toFixed(3) + " kg/h";
-
-        risultatiDiv.style.display = 'block';
-        risultatiDiv.style.borderLeftColor = '#3498db';
-        risultatiDiv.style.backgroundColor = '#e8f4f8';
+      if (!frostCondition) {
+        warningBox.innerHTML = '<div class="warn">Nelle condizioni inserite il modello non prevede formazione significativa di brina. Quindi η = 1.</div>';
+      } else if (Math.abs(eta - etaPoly) > 0.03) {
+        warningBox.innerHTML = '<div class="warn">La correlazione polinomiale si discosta dal calcolo fisico parametrico nelle condizioni inserite. Per queste condizioni conviene usare il calcolo fisico.</div>';
+      } else {
+        warningBox.innerHTML = '<div class="warn">Risultato ottenuto con modello semplificato. I parametri empirici k, δ<sub>crit</sub> e Q<sub>def</sub> andrebbero calibrati sulla macchina reale per maggior precisione.</div>';
+      }
     }
 
-    function mostraErrore(messaggio) {
-        const risultatiDiv = document.getElementById('risultati');
-        risultatiDiv.style.display = 'block';
-        risultatiDiv.style.borderLeftColor = '#e74c3c';
-        risultatiDiv.style.backgroundColor = '#fadbd8';
-        risultatiDiv.innerHTML = `<h3>Attenzione</h3><p>${messaggio}</p>`;
-    }
-</script>
-
+    // Calcolo iniziale al caricamento
+    calcola();
+  </script>
 </body>
 </html>
